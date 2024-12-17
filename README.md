@@ -1,72 +1,46 @@
 # Nuxt 3 + Cloudflare (Pages + D1) + Auth (Lucia)
 
-A demo using [Nuxt](https://nuxt.com), Cloudflare [Pages](https://pages.cloudflare.com) + [D1](https://developers.cloudflare.com/d1) database, [Drizzle ORM](https://orm.drizzle.team) and [Lucia](https://lucia-auth.com/?nuxt) auth.
-
-Inspired by [Nuxt Todo List on the Edge](https://github.com/Atinux/nuxt-todos-edge).
-
-Take a look at [NuxtHub](https://github.com/nuxt-hub/core) for a more complete solution.
-
-## Setup
-
-### Pages
-
-A. Create a CF pages deployment linked to your GitHub repository.
-
-B. Use [Wrangler](https://developers.cloudflare.com/workers/wrangler):
+## 安装依赖
 
 ```bash
-pnpm build
+pnpm i
 ```
 
-Preview build (setup D1 first):
+## 创建数据库
+
+如数据库名为：demo
 
 ```bash
-pnpm wrangler pages dev dist
+wrangler d1 create demo
 ```
 
-Deploy build to CF:
-
+如果是线上已经存在的数据库，随便执行一个语句
 ```bash
-pnpm wrangler pages publish dist
+wrangler d1 execute demo --command "SELECR * from users" --local
 ```
 
-### D1
-
-A. Create a D1 database in CF.
-
-In the CF Pages project settings -> Functions, add the binding between your D1 database and the DB variable.
-
-B. Use Wrangler:
+## 配置 wrangler.toml
 
 ```bash
-wrangler d1 create <DATABASE_NAME>
+cp wrangler.toml.example wrangler.toml
 ```
 
-[Bind](https://developers.cloudflare.com/d1/get-started/#4-bind-your-worker-to-your-d1-database) Worker with D1 database:
+替换上一步生成的数据库配置，如果线上已经存在的数据库，在网页去取配置
+
+## 生成数据库语句
 
 ```bash
-----
-filename: wrangler.toml
-----
-name = "YOU PROJECT NAME"
-main = "./.output/server/index.mjs"
-
-[[d1_databases]]
-binding = "DB" # i.e. available in your Worker on env.DB
-database_name = "<DATABASE_NAME>"
-database_id = "<unique-ID-for-your-database>"
+pnpm run db:generate
 ```
 
-To init local database and run server locally:
+## 插入本地数据库数据结构
 
 ```bash
-wrangler d1 execute <DATABASE_NAME> --local --file server/db/migrations/0000_cultured_fixer.sql
-wrangler dev --local --persist
+pnpm run db:migrate
 ```
 
-Deploy:
+## 插入线上数据库数据结构
 
 ```bash
-wrangler d1 execute <DATABASE_NAME> --file server/db/migrations/0000_cultured_fixer.sql
-wrangler deploy
+pnpm run db:migrate:prod
 ```
