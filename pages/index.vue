@@ -16,6 +16,18 @@ async function handleLogout() {
     console.log(error)
   }
 }
+
+async function handleTest() {
+  try {
+    const res = await $fetch("http://baidu.com", {
+      method: "POST",
+    })
+    console.log(res)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 </script>
 <template>
   <UContainer class="h-screen flex justify-center items-center">
@@ -27,6 +39,7 @@ async function handleLogout() {
       <pre class="code">{{ JSON.stringify(data, null, 2) }}</pre>
       <template #footer class="foat-right">
         <UButton label="Logout" @click="handleLogout" />
+        <UButton label="Test" @click="handleTest" />
       </template>
     </UCard>
   </UContainer>

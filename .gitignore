@@ -12,3 +12,5 @@ wrangler.toml
 .wrangler
 
 .wrangler/state/v3
+
+pnpm-lock.yaml
